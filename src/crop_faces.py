@@ -11,6 +11,7 @@ class Crop_Faces():
 
     def __init__(self):
         global param
+        self.path = r"C:\Users\bman1\anaconda3\pkgs\opencv-4.10.0-py313h8241d7d_2\Library\etc\haarcascades\haarcascade_frontalface_default.xml"
 
 
     def training_crop_faces(self):
@@ -83,7 +84,7 @@ class Crop_Faces():
                         print(f"Saved face to {output_path}")
 
     def attendance_crop_faces(self):
-        haar_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        haar_cascade = cv2.CascadeClassifier(self.path)
         if haar_cascade.empty():
             print("Haar Cascade failed to load. Check the path or OpenCV installation.")
             return

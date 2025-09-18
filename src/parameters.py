@@ -14,7 +14,7 @@ class Parameters ():
         self.rank = 23
         self.dims = (92, 112)
         self.outputNum = self.count_folders("../Students/Cropped_Students")
-        self.layers = [1500, 500, self.outputNum]
+        self.layers = [256, 128, self.outputNum]
         self.confirmationRate =.4   
         self.learningRate =.015   
 
