@@ -2,6 +2,9 @@
 Facial Recognition for Classroom Attendance Implementation File
 Team 6: Ryan Bulharowski, Austen Leslie, Nahum Mekonnen, Van Nipper
 """
+import sys
+sys.dont_write_bytecode = True
+
 
 # from data import dataset
 from parameters import Parameters
