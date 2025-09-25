@@ -16,7 +16,7 @@ class Crop_Faces():
 
     def training_crop_faces(self):
         print("Cropping faces from Uncropped_Students folder...")
-        haar_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+        haar_cascade = cv2.CascadeClassifier(self.path)
         if haar_cascade.empty():
             print("Haar Cascade failed to load. Check the path or OpenCV installation.")
             return
