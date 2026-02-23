@@ -41,7 +41,7 @@ def get_train_valid_loader(data_dir, batch_size, augment):
     train_dataset = datasets.CelebA(root=data_dir, split='train', download=False, transform=train_transform)
     valid_dataset = datasets.CelebA(root=data_dir, split='valid', download=False, transform=valid_transform)
 
-    # Use standard DataLoaders (this fixes the IndexError)
+    # Use standard DataLoaders
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     valid_loader = torch.utils.data.DataLoader(valid_dataset, batch_size=batch_size, shuffle=False)
 
