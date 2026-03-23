@@ -201,8 +201,8 @@ for epoch in range(num_epochs):
         )
 
 
-kernel1 = model.layer1[0].weight.data
-kernel2 = model.layer2[0].weight.data
+kernel1 = model.layer1[0].weight.data.clone()
+kernel2 = model.layer2[0].weight.data.clone()
 
 
 def svd_approx(kernel, rank):  # Approximates to get the important data and trim 0s
@@ -224,29 +224,31 @@ def svd_approx(kernel, rank):  # Approximates to get the important data and trim
     return k2d_approx.reshape(original_shape)
 
 
-rank1 = 6  # max is min(6, 75) = 6 for layer1
-rank2 = 16  # max is min(16, 150) = 16 for layer2
+ranks1 = [round(r) for r in np.linspace(1, 6, 20)]  # max is min(6, 75) = 6 for layer1
+ranks2 = [
+    round(r) for r in np.linspace(1, 16, 20)
+]  # max is min(16, 150) = 16 for layer2
 # Chose the Max for best output of the Accuracy
 
-with torch.no_grad():
-    model.layer1[0].weight.copy_(svd_approx(kernel1, rank1))
-    model.layer1[0].weight.copy_(svd_approx(kernel1, rank1))
+for r1, r2 in zip(ranks1, ranks2):
+    with torch.no_grad():
+        model.layer1[0].weight.copy_(svd_approx(kernel1, r1))
+        model.layer2[0].weight.copy_(svd_approx(kernel2, r2))
 
+    with torch.no_grad():
+        correct = 0
+        total = 0
+        for images, labels in valid_loader:
+            images = images.to(device)
+            labels = labels.to(device).float()
+            outputs = model(images)
+            predicted = (torch.sigmoid(outputs) > 0.5).float()
+            correct += (predicted == labels).sum().item()
+            total += labels.numel()
 
-with torch.no_grad():
-    correct = 0
-    total = 0
-    for images, labels in valid_loader:
-        images = images.to(device)
-        labels = labels.to(device).float()
-        outputs = model(images)
-        predicted = (torch.sigmoid(outputs) > 0.5).float()
-        correct += (predicted == labels).sum().item()
-        total += labels.numel()
-
-    svd_accuracy = 100 * correct / total
-    print(
-        "Accuracy of the network on the {} validation images (SVD rank {}/{}): {} %".format(
-            5000, rank1, rank2, svd_accuracy
+        svd_accuracy = 100 * correct / total
+        print(
+            "Accuracy of the network on the {} validation images (SVD rank {}/{}): {} %".format(
+                5000, r1, r2, svd_accuracy
+            )
         )
-    )
