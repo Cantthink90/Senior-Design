@@ -201,8 +201,7 @@ for epoch in range(num_epochs):
         )
 
 
-kernel1 = model.layer1[0].weight.data.clone()
-kernel2 = model.layer2[0].weight.data.clone()
+
 
 
 def svd_approx(kernel, rank):  # Approximates to get the important data and trim 0s
@@ -232,8 +231,15 @@ ranks2 = [
 
 for r1, r2 in zip(ranks1, ranks2):
     with torch.no_grad():
-        model.layer1[0].weight.copy_(svd_approx(kernel1, r1))
-        model.layer2[0].weight.copy_(svd_approx(kernel2, r2))
+        for layer in model.layer1:
+            if hasattr(layer, 'weight') and layer.weight is not None:
+                kernel = layer.weight.data.clone()
+                layer.weight.copy_(svd_approx(kernel, r1))
+
+        for layer in model.layer2:
+            if hasattr(layer, 'weight') and layer.weight is not None:
+                kernel = layer.weight.data.clone()
+                layer.weight.copy_(svd_approx(kernel, r2))
 
     with torch.no_grad():
         correct = 0
